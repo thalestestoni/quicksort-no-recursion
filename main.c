@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Partition Partition;
-struct Partition {
+typedef struct Particao Particao;
+struct Particao {
     int inicio;
     int fim;
-    Partition *proximo;
+    Particao *proximo;
 };
 
 typedef struct Pilha Pilha;
 struct Pilha {
-    Partition *inicio;
+    Particao *inicio;
 };
 
 void inicializarPilha(Pilha *pilha) {
@@ -18,65 +18,65 @@ void inicializarPilha(Pilha *pilha) {
 };
 
 void empilhar(Pilha *pilha, int inicio, int fim) {
-    Partition *partition = malloc(sizeof(Partition));
-    partition->inicio = inicio;
-    partition->fim = fim;
-    partition->proximo = NULL;
+    Particao *particao = malloc(sizeof(Particao));
+    particao->inicio = inicio;
+    particao->fim = fim;
+    particao->proximo = NULL;
 
     if (pilha->inicio == NULL) {
-        pilha->inicio = partition;
+        pilha->inicio = particao;
     } else {
-        Partition *aux = pilha->inicio;
+        Particao *aux = pilha->inicio;
 
         while (aux->proximo != NULL) {
             aux = aux->proximo;
         }
 
-        aux->proximo = partition;
+        aux->proximo = particao;
     }
 };
 
-Partition desempilhar(Pilha *pilha) {
-    Partition *anterior, *remover, partition;
+Particao desempilhar(Pilha *pilha) {
+    Particao *anterior, *remover, particao;
     
     remover = pilha->inicio;
 
     if (!remover->proximo) {
-        partition = *remover;
+        particao = *remover;
         free(remover);
         pilha->inicio = NULL;
-        return partition;
+        return particao;
     } else {
         while (remover->proximo != NULL) {
             anterior = remover;
             remover = remover->proximo;
         }
 
-        partition = *remover;
+        particao = *remover;
         free(remover);
         anterior->proximo = NULL;
-        return partition;
+        return particao;
     }
 };
 
-void swap(int *a, int *b) {
+void trocar(int *a, int *b) {
     int aux = *a;
     *a = *b;
     *b = aux;
 };
 
-int partition(int lista[], int inicio, int fim) {
+int ordenar(int lista[], int inicio, int fim) {
     int pivot = lista[fim];
     int i = inicio;
 
     for (int j = inicio; j < fim-1; j++) {
         if (lista[j] <= pivot) {
-            swap(&lista[j], &lista[i]);
+            trocar(&lista[j], &lista[i]);
             i++;
         }
     }
 
-    swap(&lista[i], &lista[fim]);
+    trocar(&lista[i], &lista[fim]);
 
     return i;
 };
@@ -88,10 +88,10 @@ void quicksort(int lista[], int inicio, int fim) {
     empilhar(&pilha, inicio, fim);
 
     while(pilha.inicio != NULL) {
-        Partition particao = desempilhar(&pilha);
+        Particao particao = desempilhar(&pilha);
 
         if (particao.inicio < particao.fim) {
-            int posicaoPivot = partition(lista, particao.inicio, particao.fim);
+            int posicaoPivot = ordenar(lista, particao.inicio, particao.fim);
 
             empilhar(&pilha, particao.inicio, posicaoPivot-1);
             empilhar(&pilha, posicaoPivot+1, particao.fim);
